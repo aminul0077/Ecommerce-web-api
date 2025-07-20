@@ -3,18 +3,30 @@ GET http://localhost:5045/
 
 ###
 
-GET http://localhost:5045/api/categories
+GET http://localhost:5045/api/categories?searchValue=Android
 
 ###
 
 POST http://localhost:5045/api/categories
+Content-Type: application/json
+
+{
+    "Name":"Android",
+    "Description":"Apple product find here."
+}
 
 ###
 
-PUT http://localhost:5045/api/categories
+PUT http://localhost:5045/api/categories/5963cc49-cd84-480b-b8f0-5fadb24429b7
+Content-Type:application/json
+
+{
+    "Name":"Android",
+    "Description":"AAndroid product find here."
+}
 
 ###
 
-DELETE  http://localhost:5045/api/categories
+DELETE  http://localhost:5045/api/categories/29c7a117-2954-4af1-9291-27ae31db88cf
 
 ###

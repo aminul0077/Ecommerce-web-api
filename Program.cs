@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,18 +15,23 @@ List<Category> categories = new List<Category>();
 
 app.MapGet("/", () => "API is working fine");
 //Get
-app.MapGet("/api/categories", () =>
+app.MapGet("/api/categories", ([FromQuery] string searchValue ="") =>
 {
+    if (searchValue != null)
+    {
+        var searchCategories = categories.Where(c => c.Name.Contains(searchValue, StringComparison.OrdinalIgnoreCase)).ToList();
+        return Results.Ok(searchCategories);
+    }
     return Results.Ok(categories);
 });
 //Post
-app.MapPost("/api/categories", () =>
+app.MapPost("/api/categories", ([FromBody] Category categoryData) =>
 {
     var newCategory = new Category
     {
-        CategoryId = Guid.Parse("c2e4ea46-a651-48b5-a608-d6d47623aef7"),
-        Name = "Electronics",
-        Description = "Devices and gadget includung phones, laptop and other electronic equipment",
+        CategoryId = Guid.NewGuid(),
+        Name = categoryData.Name,
+        Description = categoryData.Description,
         CreatedAt = DateTime.UtcNow,
 
     };
@@ -34,9 +40,9 @@ app.MapPost("/api/categories", () =>
 });
 
 //Delete
-app.MapDelete("/api/categories", () =>
+app.MapDelete("/api/categories/{categoryId}", (Guid categoryId) =>
 {
-    var foundCategory = categories.FirstOrDefault(category => category.CategoryId == Guid.Parse("c2e4ea46-a651-48b5-a608-d6d47623aef7"));
+    var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     if (foundCategory == null)
     {
         return Results.NotFound("Does not exit");
@@ -46,15 +52,15 @@ app.MapDelete("/api/categories", () =>
 });
 
 //Update
-app.MapPut("/api/categories", () =>
+app.MapPut("/api/categories/{categoryId}", (Guid categoryId, [FromBody] Category categoryData) =>
 {
-    var foundCategory = categories.FirstOrDefault(category => category.CategoryId == Guid.Parse("c2e4ea46-a651-48b5-a608-d6d47623aef7"));
+    var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
     if (foundCategory == null)
     {
         return Results.NotFound("Does not exit!!!");
     }
-    foundCategory.Name = "Smart Phone";
-    foundCategory.Description = "Smart phone ia a nice category";
+    foundCategory.Name = categoryData.Name;
+    foundCategory.Description = categoryData.Description;
     return Results.NoContent();
 });
 
@@ -65,7 +71,7 @@ public record Category
 {
     public Guid CategoryId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     public string? Description { get; set; }
 
