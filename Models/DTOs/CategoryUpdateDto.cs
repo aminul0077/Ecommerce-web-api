@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace project1.Models
+namespace project1.Models.DTOs
 {
-    public class Category
+    public class CategoryUpdateDto
     {
-        public Guid CategoryId { get; set; }
-
         public string Name { get; set; }
 
         public string? Description { get; set; } = string.Empty;
-
-        public DateTime CreatedAt { get; set; }
-     
-    };
+    }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using project1.Models;
+using project1.Models.DTOs;
 
 namespace project1.Controllers
 {
@@ -22,12 +23,20 @@ namespace project1.Controllers
                 var searchCategories = categories.Where(c => c.Name.Contains(searchValue, StringComparison.OrdinalIgnoreCase)).ToList();
                 return Ok(searchCategories);
             }
-            return Ok(categories);
+
+           var categoryList = categories.Select(c => new CategoryReadDto
+            {
+                CategoryId = c.CategoryId,
+                Name = c.Name,
+                Description = c.Description,
+                CreatedAt = c.CreatedAt
+            }).ToList();
+            return Ok(categoryList);
         }
 
         //POST
         [HttpPost]
-        public IActionResult CreateCategory([FromBody] Category categoryData)
+        public IActionResult CreateCategory([FromBody] CategoryCreateDto categoryData)
         {
             var newCategory = new Category
             {
@@ -38,12 +47,20 @@ namespace project1.Controllers
 
             };
             categories.Add(newCategory);
-            return Created($"/api/categories/{newCategory.CategoryId}", newCategory);
+
+            var categoryReadDto = new CategoryReadDto
+            {
+                CategoryId = newCategory.CategoryId,
+                Name = newCategory.Name,
+                Description = newCategory.Description,
+                CreatedAt = newCategory.CreatedAt,
+            };
+            return Created($"/api/categories/{newCategory.CategoryId}", categoryReadDto);
         }
 
         //PUT
         [HttpPut("{categoryId:guid}")]
-        public IActionResult UpdateCategoryById(Guid categoryId, [FromBody] Category categoryData)
+        public IActionResult UpdateCategoryById(Guid categoryId, [FromBody] CategoryUpdateDto categoryData)
         {
             var foundCategory = categories.FirstOrDefault(category => category.CategoryId == categoryId);
             if (foundCategory == null)

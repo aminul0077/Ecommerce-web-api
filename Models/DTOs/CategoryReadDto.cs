@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace project1.Models
+namespace project1.Models.DTOs
 {
-    public class Category
+    public class CategoryReadDto
     {
         public Guid CategoryId { get; set; }
 
@@ -15,5 +15,5 @@ namespace project1.Models
 
         public DateTime CreatedAt { get; set; }
      
-    };
+    }
 }
